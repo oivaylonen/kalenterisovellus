@@ -14,3 +14,52 @@ object ICSUtils:
 
     val dateTimeObject = LocalDateTime.parse(input, inFormatter)
     dateTimeObject.format(outFormatter)
+  
+  end toIcsDateTime
+  
+  
+  // Funktio muuttaa ajan "yyyyMMdd'T'HHmmss" -> "dd.MM.yyyy HH:mm" 
+  def formIcsDataTime(icsInput: String): String =
+    val inFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")
+    val outFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+    
+    val dateTimeObject = LocalDateTime.parse(icsInput, inFormatter)
+    dateTimeObject.format(outFormatter)
+    
+  end formIcsDataTime
+  
+  
+  // Funktio parsii .ics muotoisen tapahtuman kalenteriin sopivaksi Event-olioksi
+  def parseIcsEvent(lines: Seq[String]): Event =
+
+    var name = ""
+    var start = ""
+    var end = ""
+    var desc = ""
+    var catName = "Other"  //Other, jos ei kategoriaa määritelty
+    
+    for line <- lines do
+      if line startsWith("SUMMARY:") then
+        name = line.stripPrefix("SUMMARY:").trim
+        
+      else if line.startsWith("DESCRIPTION:") then
+        desc = line.stripPrefix("DESCRIPTION:").trim
+        
+      else if line.startsWith("DTSTART:") then
+        val data = line.stripPrefix("DTSTART:").trim
+        start = formIcsDataTime(data)
+        
+      else if line.startsWith("DTEND:") then
+        val data = line.stripPrefix("DTEND:").trim
+        end = formIcsDataTime(data)
+        
+      else if line.startsWith("CATEGORIES:") then
+        catName = line.stripPrefix("CATEGORIES:").trim
+        
+    // Korjaa testaus: Nyt viallista dataa voi päätyä Eventtiin
+    // Korjaa Category: jos category löytyy ota se väri
+    Event(name, start, end, desc, false, Category(catName, scalafx.scene.paint.Color.Black))
+  
+  end parseIcsEvent
+
+end ICSUtils

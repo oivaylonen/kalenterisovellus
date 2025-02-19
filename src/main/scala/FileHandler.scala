@@ -52,3 +52,31 @@ object FileHandler:
     finally
       // Suljetaan tiedosto
       pw.close()
+
+  end saveEventsToIcs
+
+
+  // Funktio lukee .ics tiedostosta dataa ja palauttaa taulukon Eventtejä
+  def loadEventsFromIcs(filename: String): Seq[Event] =
+    // luetaan tiedston rivit listaan
+    val lines = Source.fromFile(filename).getLines().toList
+
+    var insideEvent = false // True, kun kerätään Eventtiä
+    val eventLines = Buffer[String]() // Kerätään yksittäisen Eventin arvot tänne
+    val results = Buffer[Event]() // Laitetaan kerätyt Eventit tänne
+
+    for line <- lines do
+      if line startsWith("BEGIN:VEVENT") then
+        insideEvent = true
+        eventLines.clear() //Tyhjennetään edellinen
+      else if line.startsWith("END:VEVENT") then
+        insideEvent = false
+        val newEvent = ICSUtils.parseIcsEvent(eventLines.toSeq)
+        results.append(newEvent)
+      else if insideEvent then
+        eventLines.append(line)
+
+    results.toSeq
+  end loadEventsFromIcs
+
+end FileHandler

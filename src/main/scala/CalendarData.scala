@@ -2,7 +2,7 @@ package mycalendar
 
 import scala.collection.mutable.Buffer
 
-object CalendarData
+object CalendarData:
 
   // Tallennetaan kaikki tapahtumat tähän listaan
   private val events: Buffer[Event] = Buffer()

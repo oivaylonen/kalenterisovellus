@@ -1,4 +1,4 @@
-package model
+package `type`
 
 import scalafx.scene.paint.Color
 

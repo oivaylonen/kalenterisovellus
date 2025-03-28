@@ -1,6 +1,6 @@
-package model
+package `type`
 
-import model.Category
+import `type`.Category
 
 class Event (
   val name: String,

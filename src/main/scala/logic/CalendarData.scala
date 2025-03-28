@@ -20,3 +20,7 @@ object CalendarData:
       true
     else
       false
+
+  // Kaikki tapahtumat
+  def getAllEvents: Buffer[Event] =
+    events

@@ -1,5 +1,7 @@
 package mycalendar
 
+import model.Event
+
 import java.io.{File, PrintWriter}
 import scala.io.Source
 import scala.collection.mutable.Buffer

@@ -1,4 +1,4 @@
-package mycalendar
+package model
 
 import scalafx.scene.paint.Color
 

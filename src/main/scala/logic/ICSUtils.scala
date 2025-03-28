@@ -1,5 +1,7 @@
 package mycalendar
 
+import model.{Category, Event}
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -17,7 +19,6 @@ object ICSUtils:
 
   end toIcsDateTime
 
-
   // Funktio muuttaa ajan "yyyyMMdd'T'HHmmss" -> "dd.MM.yyyy HH:mm"
   def fromIcsDataTime(icsInput: String): String =
     val inFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")
@@ -27,7 +28,6 @@ object ICSUtils:
     dateTimeObject.format(outFormatter)
 
   end fromIcsDataTime
-
 
   // Funktio parsii .ics muotoisen tapahtuman kalenteriin sopivaksi Event-olioksi
   def parseIcsEvent(lines: Seq[String]): Event =

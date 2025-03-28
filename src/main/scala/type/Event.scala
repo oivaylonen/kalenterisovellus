@@ -1,4 +1,6 @@
-package mycalendar
+package model
+
+import model.Category
 
 class Event (
   val name: String,

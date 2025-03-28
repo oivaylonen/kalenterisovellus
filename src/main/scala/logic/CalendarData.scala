@@ -1,4 +1,6 @@
-package mycalendar
+package logic
+
+import `type`.Event
 
 import scala.collection.mutable.Buffer
 

@@ -1,6 +1,6 @@
-package mycalendar
+package logic
 
-import model.{Category, Event}
+import `type`.{Category, Event}
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

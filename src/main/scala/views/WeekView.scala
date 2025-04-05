@@ -1,113 +1,118 @@
 package views
 
-import scalafx.application.JFXApp3
-import scalafx.scene.Scene
-import scalafx.scene.control.{Button, Label}
-import scalafx.scene.layout.{BorderPane, GridPane, HBox, Pane, VBox}
+import scalafx.scene.layout._
+import scalafx.scene.control.{Label, ScrollPane}
 import scalafx.geometry.{Insets, Pos}
 import java.time.{DayOfWeek, LocalDate}
-import java.time.format.TextStyle
-import java.util.Locale
+import ViewUtils._
 
-object WeekView extends JFXApp3 {
+object WeekView {
 
-  override def start(): Unit = {
+  // Viikkonäkymä, tunnit ja viikonpäivät omissa sarakkeissa
+  // Päiväotsikosta klikkaamalla päästään päivänäkymään
+  def createWeekView(onDayClicked: LocalDate => Unit): BorderPane = {
 
     var currentMonday: LocalDate = LocalDate.now().`with`(DayOfWeek.MONDAY)
 
-    def finnishDayName(d: DayOfWeek): String = d match {
-      case DayOfWeek.MONDAY    => "MA"
-      case DayOfWeek.TUESDAY   => "TI"
-      case DayOfWeek.WEDNESDAY => "KE"
-      case DayOfWeek.THURSDAY  => "TO"
-      case DayOfWeek.FRIDAY    => "PE"
-      case DayOfWeek.SATURDAY  => "LA"
-      case DayOfWeek.SUNDAY    => "SU"
+    val titleLabel = new Label {
+      style = "-fx-font-size: 16px; -fx-font-weight: bold;"
     }
-
-    def finnishMonthName(date: LocalDate): String = {
-      val base = date.getMonth.getDisplayName(TextStyle.FULL, Locale("fi"))
-      base.capitalize
-    }
-
-    val titleLabel = new Label()
-
+    // Ruudukko, jonne viikkonäkymän elementit lisätään
     val weekGrid = new GridPane {
       alignment = Pos.Center
-      hgap = 10
       padding = Insets(10)
+      style = "-fx-background-color: #ffffff; -fx-border-color: #ddd;"
+      prefWidth = Double.MaxValue
     }
 
-    def updateWeekView(): Unit = {
-      // Yläotsikko
-      titleLabel.text = s"${finnishMonthName(currentMonday)} – ${currentMonday.getYear}"
+    // Sarakkeet
+    // ensimmäinen sarake on tunnit, siten ma-su päivät
+    val colHours = new ColumnConstraints { percentWidth = 10 }
+    weekGrid.columnConstraints.add(colHours)
 
-      // Ruudukon tyhjennys
+    for (_ <- 1 to 7) {
+      val col = new ColumnConstraints { percentWidth = 90.0 / 7 }
+      weekGrid.columnConstraints.add(col)
+    }
+
+    // Rivit
+    // ensimmäinen otsikkorivi, sitten 1..24 = tunnit
+    // Kehitä ehkä vielä koko päivä sarake
+    for (_ <- 0 to 24) {
+      weekGrid.rowConstraints.add(new RowConstraints(30))
+    }
+
+    // Tilan piirtämiseen ja päivittämiseen funktio
+    def updateWeekView(): Unit = {
+      val year = currentMonday.getYear
+      titleLabel.text = s"${finnishMonthName(currentMonday)} $year"
+
       weekGrid.children.clear()
 
-      // Sarakkeet päiville
+      // Tunneille otsikko
+      weekGrid.add(new Label("Tunnit") {
+        style = "-fx-font-weight: bold; -fx-font-size: 12px;"
+      }, 0, 0)
+
+      // Päiville otsikko
       for (i <- 0 until 7) {
         val date = currentMonday.plusDays(i)
-        // esim. MA 24.3.
-        val dayText = s"${finnishDayName(date.getDayOfWeek)} ${date.getDayOfMonth}.${date.getMonthValue}."
-
-        val dayBox = new VBox {
-          spacing = 5
-          alignment = Pos.TopCenter
-          children = Seq(
-            new Label(dayText) {
-              style = "-fx-font-weight: bold; -fx-font-size: 14px;"
-            },
-            new Pane {
-              prefWidth = 150
-              prefHeight = 150
-              style =
-                """-fx-border-color: gray;
-                  |-fx-background-color: #e0e0e0;
-                """.stripMargin
-            }
-          )
+        val dayLabel = new Label(formatDayLabel(date)) {
+          style = dayHeaderStyle
+          onMouseClicked = _ => onDayClicked(date)
         }
+        weekGrid.add(dayLabel, i + 1, 0)
+      }
 
-        // dayBox sarakkeeseen i
-        weekGrid.add(dayBox, i, 0)
+      // Tuntirivit
+      for (hour <- 0 until 24) {
+        weekGrid.add(timeLabel(hour), 0, hour + 1)
+
+        //Päiville boksit
+        for (d <- 0 until 7) {
+          val cell = new VBox {
+            spacing = 2
+            style = "-fx-border-color: #eee; -fx-background-color: #ffffff; -fx-padding: 3;"
+          }
+          weekGrid.add(cell, d + 1, hour + 1)
+        }
       }
     }
 
-    // Napit viikon selaamiseen
-    val prevWeekButton = new Button("<") {
-      onAction = _ => {
-        currentMonday = currentMonday.minusWeeks(1)
-        updateWeekView()
-      }
-    }
-    val nextWeekButton = new Button(">") {
-      onAction = _ => {
-        currentMonday = currentMonday.plusWeeks(1)
-        updateWeekView()
-      }
-    }
-
-    // Yläpalkki
+    // Yläpalkki viikkojen välillä liikkumiseen
     val topBar = new HBox {
       spacing = 20
       alignment = Pos.Center
       padding = Insets(10)
-      children = Seq(prevWeekButton, titleLabel, nextWeekButton)
+      style = "-fx-background-color: #ffffff; -fx-border-color: #ddd;"
+      children = Seq(
+        navButton("<") {
+          currentMonday = currentMonday.minusWeeks(1)
+          updateWeekView()
+        },
+        titleLabel,
+        navButton(">") {
+          currentMonday = currentMonday.plusWeeks(1)
+          updateWeekView()
+        }
+      )
     }
 
-    val mainLayout = new BorderPane {
+    // Skrollaus mahdolista pystysuunnassa
+    val scrollPane = new ScrollPane {
+      content = weekGrid
+      fitToWidth = true
+      style = "-fx-background-color: #ffffff; -fx-border-color: #ddd;"
+    }
+
+    // Lopullinen asettelun määritys
+    val layout = new BorderPane {
       top = topBar
-      center = weekGrid
-    }
-
-    stage = new JFXApp3.PrimaryStage {
-      title = "Viikkonäkymä"
-      scene = new Scene {
-        root = mainLayout
-      }
+      center = scrollPane
+      style = "-fx-background-color: #ffffff;"
     }
 
     updateWeekView()
+    layout
   }
 }

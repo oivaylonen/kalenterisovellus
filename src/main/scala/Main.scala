@@ -13,9 +13,12 @@ object Main extends JFXApp3 {
 
   override def start(): Unit = {
 
-    // Lisätään juhlapyhät calenderdataan
+    // Lisätään juhlapyhät ja testidata calenderdataan
     val holidays = FileHandler.loadEventsFromIcs("src/main/resources/FinlandHolidays.ics")
     holidays.foreach(CalendarData.addEvent)
+
+    val events = FileHandler.loadEventsFromIcs("src/main/resources/testdata.ics")
+    events.foreach(CalendarData.addEvent)
 
     val rootLayout = new BorderPane()
 

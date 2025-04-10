@@ -7,10 +7,15 @@ import scalafx.scene.control.Button
 import scalafx.geometry.Pos
 import views.{DayView, WeekView, MonthView, AddEventView, RemoveEventView}
 import java.time.LocalDate
+import logic.{FileHandler, CalendarData}
 
 object Main extends JFXApp3 {
 
   override def start(): Unit = {
+
+    // Lisätään juhlapyhät calenderdataan
+    val holidays = FileHandler.loadEventsFromIcs("src/main/resources/FinlandHolidays.ics")
+    holidays.foreach(CalendarData.addEvent)
 
     val rootLayout = new BorderPane()
 

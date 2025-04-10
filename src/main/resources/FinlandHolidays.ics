@@ -2,7 +2,7 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Mozilla.org/NONSGML Mozilla Calendar V1.1//EN
 BEGIN:VEVENT
-SUMMARY:Uudenvuodenpäivä 
+SUMMARY:Uudenvuodenpäivä
 DTSTART;VALUE=DATE:20240101
 DTEND;VALUE=DATE:20240102
 DTSTAMP:20241008T090624Z
@@ -30,8 +30,7 @@ LAST-MODIFIED:20241008T090624Z
 TRANSP:transparent
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Pitkäperjantai on maailmanlaajuinen kristillinen juhla kaksi päi
- vää ennen pääsiäissunnuntaita.
+SUMMARY:Pitkäperjantai
 DTSTART;VALUE=DATE:20240329
 DTEND;VALUE=DATE:20240330
 DTSTAMP:20241008T090624Z
@@ -57,8 +56,7 @@ LAST-MODIFIED:20241008T090624Z
 TRANSP:transparent
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Vappupäivä\, kansainvälinen työväenpäivä ja vappupäivä ov
- at vapaapäivä työntekijöille monissa maissa ympäri maailmaa.
+SUMMARY:Vappupäivä
 DTSTART;VALUE=DATE:20240501
 DTEND;VALUE=DATE:20240502
 DTSTAMP:20241008T090624Z
@@ -71,9 +69,7 @@ LAST-MODIFIED:20241008T090624Z
 TRANSP:transparent
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Ylösnousemuspäivä on pääsiäisen 40. päivä. Se on uskonnoll
- inen loma\, joka muistuttaa Jeesuksen Kristuksen ylösnousemusta taivaasee
- n.
+SUMMARY:Ylösnousemuspäivä
 DTSTART;VALUE=DATE:20240509
 DTEND;VALUE=DATE:20240510
 DTSTAMP:20241008T090624Z
@@ -208,8 +204,7 @@ LAST-MODIFIED:20241008T090625Z
 TRANSP:transparent
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Pitkäperjantai on maailmanlaajuinen kristillinen juhla kaksi päi
- vää ennen pääsiäissunnuntaita.
+SUMMARY:Pitkäperjantai
 DTSTART;VALUE=DATE:20250418
 DTEND;VALUE=DATE:20250419
 DTSTAMP:20241008T090625Z
@@ -235,8 +230,7 @@ LAST-MODIFIED:20241008T090625Z
 TRANSP:transparent
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Vappupäivä\, kansainvälinen työväenpäivä ja vappupäivä ov
- at vapaapäivä työntekijöille monissa maissa ympäri maailmaa.
+SUMMARY:Vappupäivä
 DTSTART;VALUE=DATE:20250501
 DTEND;VALUE=DATE:20250502
 DTSTAMP:20241008T090625Z
@@ -249,9 +243,7 @@ LAST-MODIFIED:20241008T090625Z
 TRANSP:transparent
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Ylösnousemuspäivä on pääsiäisen 40. päivä. Se on uskonnoll
- inen loma\, joka muistuttaa Jeesuksen Kristuksen ylösnousemusta taivaasee
- n.
+SUMMARY:Ylösnousemuspäivä
 DTSTART;VALUE=DATE:20250529
 DTEND;VALUE=DATE:20250530
 DTSTAMP:20241008T090625Z
@@ -386,8 +378,7 @@ LAST-MODIFIED:20241008T090625Z
 TRANSP:transparent
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Pitkäperjantai on maailmanlaajuinen kristillinen juhla kaksi päi
- vää ennen pääsiäissunnuntaita.
+SUMMARY:Pitkäperjantai
 DTSTART;VALUE=DATE:20260403
 DTEND;VALUE=DATE:20260404
 DTSTAMP:20241008T090625Z
@@ -413,8 +404,7 @@ LAST-MODIFIED:20241008T090625Z
 TRANSP:transparent
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Vappupäivä\, kansainvälinen työväenpäivä ja vappupäivä ov
- at vapaapäivä työntekijöille monissa maissa ympäri maailmaa.
+SUMMARY:Vappupäivä
 DTSTART;VALUE=DATE:20260501
 DTEND;VALUE=DATE:20260502
 DTSTAMP:20241008T090625Z
@@ -427,9 +417,7 @@ LAST-MODIFIED:20241008T090625Z
 TRANSP:transparent
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Ylösnousemuspäivä on pääsiäisen 40. päivä. Se on uskonnoll
- inen loma\, joka muistuttaa Jeesuksen Kristuksen ylösnousemusta taivaasee
- n.
+SUMMARY:Ylösnousemuspäivä
 DTSTART;VALUE=DATE:20260514
 DTEND;VALUE=DATE:20260515
 DTSTAMP:20241008T090625Z

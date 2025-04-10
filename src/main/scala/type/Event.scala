@@ -1,14 +1,13 @@
 package `type`
 
-import `type`.Category
-
 class Event (
   val name: String,
   val startTime: String,
   val endTime: String,
   val description: String,
   val remainder: Boolean,
-  val category: Category
+  val category: Category,
+  val allDay: Boolean = false
 ):
 
   override def toString: String =

@@ -4,30 +4,30 @@ import `type`.{Category, Event}
 
 import java.time.{LocalDate, LocalDateTime}
 import java.time.format.DateTimeFormatter
+import scalafx.scene.paint.Color
 
 object ICSUtils:
 
-  // Funktio muuttaa ajan "dd.MM.yyyy HH:mm" -> "yyyyMMdd'T'HHmmss"
+  // localdatetime => ICS merkkijono
   def toIcsDateTime(input: String): String =
-    val inFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
-    val outFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")
-    val dateTimeObject = LocalDateTime.parse(input, inFormatter)
-    dateTimeObject.format(outFormatter)
+    input.format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"))
   end toIcsDateTime
 
-  // Funktio muuttaa "yyyyMMdd'T'HHmmss" -> "dd.MM.yyyy HH:mm"
-  def fromIcsDataTime(icsInput: String): String =
-    val inFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")
-    val outFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
-    val dateTimeObject = LocalDateTime.parse(icsInput, inFormatter)
-    dateTimeObject.format(outFormatter)
+  // ICS merkkijono => localdatetime
+  def fromIcsDataTime(icsInput: String): LocalDateTime =
+    LocalDateTime.parse(icsInput, DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"))
   end fromIcsDataTime
+
+  // Apufunktio ajan näyttämiseen
+  def formatForGui(input: LocalDateTime): String = 
+    input.format(DateTimeFormatter.ofPattern("HH:mm"))
+  end formatForGui
 
   // Funktio parsii .ics muotoisen tapahtuman kalenteriin sopivaksi Event-olioksi
   def parseIcsEvent(lines: Seq[String]): Event =
     var name    = ""
-    var start   = ""
-    var end     = ""
+    var startOpt   = Option.empty[LocalDateTime]
+    var endOpt     = Option.empty[LocalDateTime]
     var desc    = ""
     var catName = "Other"
     var allDay  = false
@@ -43,26 +43,38 @@ object ICSUtils:
         allDay = true
         val data = line.stripPrefix("DTSTART;VALUE=DATE:").trim
         val localDate = LocalDate.parse(data, DateTimeFormatter.ofPattern("yyyyMMdd"))
-        start = localDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " 00:00"
+        startOpt = Some(localDate.atStartOfDay())
 
       else if line.startsWith("DTEND;VALUE=DATE:") then
         allDay = true
         val data = line.stripPrefix("DTEND;VALUE=DATE:").trim
         val localDate = LocalDate.parse(data, DateTimeFormatter.ofPattern("yyyyMMdd"))
-        end = localDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " 23:59"
+        endOpt = Some(localDate.minusDays(1).atTime(23, 59))
 
       else if line.startsWith("DTSTART:") then
         val data = line.stripPrefix("DTSTART:").trim
-        start = fromIcsDataTime(data)
+        startOpt = Some(fromIcsDataTime(data))
 
       else if line.startsWith("DTEND:") then
         val data = line.stripPrefix("DTEND:").trim
-        end = fromIcsDataTime(data)
+        endOpt = Some(fromIcsDataTime(data))
 
       else if line.startsWith("CATEGORIES:") then
         catName = line.stripPrefix("CATEGORIES:").trim
+      
+      
+    val start = startOpt.getOrElse(throw new IllegalArgumentException("DSTART puuttuu tiedostosta"))
+    val end = endOpt.getOrElse(start)
 
-    Event(name, start, end, desc, remainder = false, Category(catName, scalafx.scene.paint.Color.Black), allDay = allDay)
+    Event(
+      name        = name,
+      startTime   = start,
+      endTime     = end,
+      description = desc,
+      remainder   = false,
+      category    = Category(catName, Color.Black),
+      allDay      = allDay
+    )
   end parseIcsEvent
 
 end ICSUtils

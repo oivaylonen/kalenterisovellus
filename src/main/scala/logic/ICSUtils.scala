@@ -9,8 +9,8 @@ import scalafx.scene.paint.Color
 object ICSUtils:
 
   // localdatetime => ICS merkkijono
-  def toIcsDateTime(input: String): String =
-    input.format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"))
+  def toIcsDateTime(input: LocalDateTime): String =
+  input.format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"))
   end toIcsDateTime
 
   // ICS merkkijono => localdatetime
@@ -19,7 +19,7 @@ object ICSUtils:
   end fromIcsDataTime
 
   // Apufunktio ajan näyttämiseen
-  def formatForGui(input: LocalDateTime): String = 
+  def formatForGui(input: LocalDateTime): String =
     input.format(DateTimeFormatter.ofPattern("HH:mm"))
   end formatForGui
 
@@ -61,8 +61,8 @@ object ICSUtils:
 
       else if line.startsWith("CATEGORIES:") then
         catName = line.stripPrefix("CATEGORIES:").trim
-      
-      
+
+
     val start = startOpt.getOrElse(throw new IllegalArgumentException("DSTART puuttuu tiedostosta"))
     val end = endOpt.getOrElse(start)
 

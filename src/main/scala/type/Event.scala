@@ -11,4 +11,4 @@ case class Event (
   val remainder: Boolean = false,
   val category: Category = Category("Other", Color.Black),
   val allDay: Boolean = false
-):
+)

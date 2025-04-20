@@ -11,11 +11,14 @@ object CalendarData:
   private val events: Buffer[Event] = Buffer()
 
   // Kategoriat
-  private val categories: Buffer[Category] = Buffer(
-    Category("Yleinen", Color.Black),
-    Category("Opiskelu", Color.Blue),
-    Category("Työ", Color.Green),
-    Category("Vapaa-aika", Color.Magenta)
+  private val categories: Buffer[Category] = Buffer()
+
+  // Värit kategorioille
+  private val palette: Vector[Color] = Vector(
+    Color.Red, Color.Blue, Color.Green,
+    Color.Yellow, Color.Orange, Color.Purple,
+    Color.Pink, Color.Magenta,
+    Color.Brown, Color.Lime
   )
 
   // Lisää uusi tapahtuma, jos se ei jo ole listassa
@@ -38,11 +41,12 @@ object CalendarData:
   def getAllEvents: Buffer[Event] =
     events
 
-  // Kategorioiden lisääminen
+  // Lisää uusi kategoria, jos sitä ei ole. Väri valitaan järjestyksessä paletista
   def addCategory(cat: Category): Unit =
-    // Jos ei löydy saman nimistä, lisätään
     if !categories.exists(_.name.equalsIgnoreCase(cat.name)) then
-      categories += cat
+      val colorIndex = categories.length % palette.length
+      val coloredCat = cat.copy(color = palette(colorIndex))
+      categories += coloredCat
 
   def getAllCategories: Buffer[Category] =
     categories

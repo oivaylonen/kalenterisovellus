@@ -66,13 +66,18 @@ object ICSUtils:
     val start = startOpt.getOrElse(throw new IllegalArgumentException("DSTART puuttuu tiedostosta"))
     val end = endOpt.getOrElse(start)
 
+    // Lisätään ladattaville kategorioille värit
+    val tempCat = Category(catName, Color.Black)
+    CalendarData.addCategory(tempCat)
+    val finalCat = CalendarData.getAllCategories.find(_.name.equalsIgnoreCase(catName)).getOrElse(tempCat)
+
     Event(
       name        = name,
       startTime   = start,
       endTime     = end,
       description = desc,
       remainder   = false,
-      category    = Category(catName, Color.Black),
+      category    = finalCat,
       allDay      = allDay
     )
   end parseIcsEvent

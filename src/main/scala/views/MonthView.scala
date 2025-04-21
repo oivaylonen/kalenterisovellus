@@ -1,132 +1,95 @@
 package views
 
-import scalafx.scene.layout._
+import scalafx.scene.layout.*
 import scalafx.scene.control.{Label, ScrollPane}
 import scalafx.geometry.{Insets, Pos, HPos}
 import java.time.{YearMonth, LocalDate}
-import ViewUtils._
+import ViewUtils.*
+import logic.CalendarService
 
-object MonthView {
+object MonthView:
 
-  // Kuukausinäkymä, päivää klikkaamalla päivänäkymään
-  def createMonthView(onDayClicked: LocalDate => Unit): BorderPane = {
+  // onDayClicked kutsutaan kun päivää klikataan
+  // acitiveCats on aktiivisten kategorioiden lista
+  def createMonthView(onDayClicked: LocalDate => Unit, activeCats: Set[String]): BorderPane =
 
-    var currentYearMonth: YearMonth = YearMonth.now()
+    var ym = YearMonth.now()
+    val title = new Label { style = "-fx-font-size:16px;-fx-font-weight:bold;" }
 
-    val titleLabel = new Label {
-      style = "-fx-font-size: 16px; -fx-font-weight: bold;"
-    }
-
-    // Ruudukko, jossa 7 saraketta ja max 6 riviä
-    val monthGrid = new GridPane {
+    // ruudukko kuukaudelle
+    val grid = new GridPane:
       alignment = Pos.TopCenter
-      hgap = 5
-      vgap = 5
-      padding = Insets(20)
+      hgap = 6; vgap = 6; padding = Insets(20)
       prefWidth = Double.MaxValue
-    }
 
-    // 7 saraketta yhtä leveinä
-    for (_ <- 0 until 7) {
-      monthGrid.columnConstraints.add(new ColumnConstraints {
-        percentWidth = 100.0 / 7
-        halignment = HPos.Center
-      })
-    }
+    // lisätään sarakkeet viikonpäiville, 7kpl
+    for _ <- 0 until 7 do
+      grid.columnConstraints.add(new ColumnConstraints:
+        percentWidth = 100.0 / 7; halignment = HPos.Center)
 
-    // Päivitetään näkymä ruudukkoon
-    def updateMonthView(): Unit = {
-      // Otsikko
-      val firstDayOfMonth = currentYearMonth.atDay(1)
-      titleLabel.text = s"${finnishMonthName(firstDayOfMonth)} ${currentYearMonth.getYear}"
+    // Lisätään 6 riviä, eli maksimi tarve
+    for _ <- 0 until 6 do grid.rowConstraints.add(RowConstraints())
 
-      // Tyhjennys
-      monthGrid.children.clear()
-      monthGrid.rowConstraints.clear()
+    // Rakentaa näkymän, kutsutaan päivittämisen yhteydessä
+    def refresh(): Unit =
+      title.text = s"${finnishMonthName(ym.atDay(1))} ${ym.getYear}"
+      grid.children.clear()
 
-      // Päivämäärien laskeminen
-      val daysInMonth = currentYearMonth.lengthOfMonth()
-      val firstDayIndex = firstDayOfMonth.getDayOfWeek.getValue // 1..7
-
-      // Otsikkorivi
-      val weekdays = Seq("MA", "TI", "KE", "TO", "PE", "LA", "SU")
-      weekdays.zipWithIndex.foreach { case (name, i) =>
-        monthGrid.add(new Label(name) {
-          style = "-fx-font-weight: bold;"
-        }, i, 0)
+      // Viikonpäivät ylös riville 0
+      val w = Seq("MA", "TI", "KE", "TO", "PE", "LA", "SU")
+      w.zipWithIndex.foreach { (n, i) =>
+        grid.add(new Label(n) { style = "-fx-font-weight:bold;" }, i, 0)
       }
 
-      // Oletetaan max 6 viikkoa
-      for (_ <- 0 until 6) {
-        monthGrid.rowConstraints.add(new RowConstraints { vgrow = Priority.Always })
-      }
+      // Päivien asettelu
+      val days = ym.lengthOfMonth()
+      val firstIdx = ym.atDay(1).getDayOfWeek.getValue
+      var d = 1; var row = 1; var col = firstIdx - 1
 
-      // Sijoitetaan Vbox jokaiseen päivään
-      var dayCounter = 1
-      var row = 1
-      var col = firstDayIndex - 1
-
-      while (dayCounter <= daysInMonth) {
-        val date = currentYearMonth.atDay(dayCounter)
-
-        // Yhden päivän laatikko
-        val box = new VBox {
+      // Luodaan päivälle boksi ja laitetaan päivän tapahtumat sen sisään
+      while d <= days do
+        val dayDate = ym.atDay(d)
+        val cell = new VBox:
           spacing = 3
           alignment = Pos.TopLeft
-          padding = Insets(5)
+          padding = Insets(4)
           prefHeight = 120
-          vgrow = Priority.Always
-          style = "-fx-border-color: #ccc; -fx-background-color: #ffffff; -fx-cursor: hand;"
-          onMouseClicked = _ => onDayClicked(date)
-        }
-        box.children.add(new Label(dayCounter.toString) {
-          style = "-fx-font-weight: bold;"
-        })
+          style = "-fx-border-color:#cccccc;-fx-background-color:#ffffff;-fx-cursor:hand;"
+          onMouseClicked = _ => onDayClicked(dayDate) //Siirytään päivänäkymään klikatessa
 
-        monthGrid.add(box, col, row)
+        // Päivänumeron lisääminen
+        cell.children.add(new Label(d.toString) { style = "-fx-font-weight:bold;" })
 
-        dayCounter += 1
-        col += 1
-        if (col > 6) {
-          col = 0
-          row += 1
-        }
-      }
-    }
+        // haetaan tapatumat ja suodatetaan aktiivisten tapahtumien mukaan
+        val evs = CalendarService
+          .eventsBetween(dayDate.atStartOfDay(), dayDate.plusDays(1).atStartOfDay().minusSeconds(1))
+          .filter(e => activeCats.isEmpty || activeCats.contains(e.category.name))
 
-    // Yläpalkki
-    val topBar = new HBox {
-      spacing = 20
-      alignment = Pos.Center
-      padding = Insets(10)
-      style = "-fx-background-color: #ffffff; -fx-border-color: #ddd;"
+        // näytetään vain kolme ensimmäistä
+        evs.take(3).foreach(e => cell.children.add(new Label(e.name)))
+
+        // asetetaan oikeaan paikkaan
+        grid.add(cell, col, row)
+
+        // seuraavaan päivään siirtyminen
+        d += 1; col += 1
+        if col > 6 then { col = 0; row += 1 }
+      end while
+
+    // Navigaatio kuukausien välillä liikkumiseen
+    val nav = new HBox:
+      spacing = 20; alignment = Pos.Center; padding = Insets(10)
+      style = "-fx-background-color:#ffffff;-fx-border-color:#dddddd;"
       children = Seq(
-        navButton("<") {
-          currentYearMonth = currentYearMonth.minusMonths(1)
-          updateMonthView()
-        },
-        titleLabel,
-        navButton(">") {
-          currentYearMonth = currentYearMonth.plusMonths(1)
-          updateMonthView()
-        }
+        navButton("<") { ym = ym.minusMonths(1); refresh() },
+        title,
+        navButton(">") { ym = ym.plusMonths(1); refresh() }
       )
-    }
 
-    // Skrollaus mahdolista pystysuunnassa
-    val scrollPane = new ScrollPane {
-      content = monthGrid
-      fitToWidth = true
-      style = "-fx-background-color: #ffffff; -fx-border-color: #ddd;"
-    }
-    // Lopullinen asettelun määritys
-    val layout = new BorderPane {
-      top = topBar
-      center = scrollPane
-      style = "-fx-background-color: #ffffff;"
-    }
-
-    updateMonthView()
-    layout
-  }
-}
+    // Asettelu
+    new BorderPane:
+      top = nav
+      center = new ScrollPane { content = grid; fitToWidth = true }
+      style = "-fx-background-color:#ffffff;"
+      refresh()
+end MonthView

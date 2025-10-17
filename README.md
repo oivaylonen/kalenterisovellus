@@ -1,40 +1,64 @@
-# Projektin seuranta
+# Kalenterisovellus — ScalaFX Desktop Calendar
 
-## Kokonaisaika-arvio tähän mennessä: +100h
+[![Scala](https://img.shields.io/badge/Scala-3.x-informational)](#)
+[![Build Tool](https://img.shields.io/badge/build-sbt-informational)](#)
+[![UI](https://img.shields.io/badge/UI-JavaFX%2FScalaFX-informational)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## Tehtävälista
+A clean, local-first **desktop calendar** built with **ScalaFX**. It provides **Day / Week / Month** views, adding and removing events with validation, **category-based filtering**, and a simple **reporting** view that summarizes counts and total hours per category. Data is stored in a portable **iCalendar (.ics)** file for easy interchange.
 
-### Minimi
-Pystyy tallentamaan:
-- Tapahtuman, esimerkiksi luennon, harjoituksen tai kokouksen nimi, päiväys, aloitus- ja päättymisaika. (Tehty)
-- Kalenteriin voi määritellä erityyppisiä asioita, esimerkiksi opiskeluun liittyvät asiat, eri harrastuksiin liittyvät asiat, työajat, kokoukset, juhlat, …, jolloin kuhunkin näihin liittyviä asioita voi käsitellä omana ryhmänään. (Tehty)
-- Muistutukset itselle jostakin tehtävästä, joka pitää hoitaa. (Puuttellinen)
-- Yleiset pyhäpäivät (Tehty)
+---
 
-### Helppo
-- Edellä olevat perustoiminnot. (Tehty)
-- Kalenteri näyttää viikon kerrallaan, kukin päivä omana sarakkeenaan, jossa on allekkain päivälle kirjatut asiat. (Tehty)
-- Näyttö, jossa näkyvät kaikki vuorokauden 24 tuntia omalla rivillään ja asiat näkyvät sille tunnille, jonne ne on kirjattu. (Tehty)
-- Aikavaraus voi olla pitkä (yli puolenyön tai useita päiviä). (Tehty)
-- Näyttö, jossa näkyy vain yhden päivän osalle kirjatut asiat allekkain (Tehty)
-- Oletuksena on näkyvissä nykyinen viikko. (Tehty)
-- Käyttäjä voi selata viikko kerrallaan ajassa eteen tai taaksepäin. (Tehty)
-- Kalenteriin lisätään asiat kysymällä käyttäjältä (tekstinä) päiväys, aloitusaika ja asia. (Tehty)
-- Kalenterista voi poistaa asioita. (Tehty)
-- Kalenterin tiedot talletetaan tiedostoon ja luetaan sieltä. (Tehty)
-- Tapahtumat voidaan tallentaa johonkin standardiformaattiin ja ne voidaan siirtää toisiin kalentereihin tai päinvastoin. (Tehty)
-- Tehtävässä ei tarvitse käyttää grafiikkaa. (Tehty)
+## Highlights
 
-### Keskivaikea
-- Graafinen käyttöliittymä (Tehty)
-- Aikavarauksiin voi liittää värikoodin, joka kuvaa erityyppisiä asioita, kuten opiskelua, työtehtäviä, harrastuksia, tms. Voit käyttää eri värisävyjä osoittamaan tarkempaa jaottelua, esim. luennot tummanpunaisella, harjoitukset vaaleanpunaisella jne. (Tehty)
-- Kalenterista, jossa on näkyvissä yhden päivän tai viikon tunnit, voi varata hiirellä maalaamalla sopivan ajan ja kirjata siihen halutut tiedot. (Puuttuu, ei tehdä)
-- Kalenterimerkintään voi kirjata lisätietoja (esim. paikka, kurssi, johon asia liittyy, verkkolinkki, henkilöt, joita asia koskee oman itsen lisäksi kuten työryhmän jäsenet, kaverit, opinnäytetyön ohjaaja) (Tehty)
-- Voit valita, mitä asioita kalenterista näytetään, esimerkiksi vain työajat tai opiskeluun liittyvät asiat. (Tehty)
-- Voit hakea kaikki tapahtumat, jotka liittyvät johonkin tiettyyn kurssiin, harrastukseen tai henkilöön, joka osallistuu niihin itsesi lisäksi ja niistä näkyviin erillisen listan. (Poistamisessa käytännössä haku tapahtumille, mutta ei täydellinen)
+- **Three time views**: Day (15-minute slots), Week (30-minute slots), Month (compact tiles).
+- **Add & remove events** with input validation (end must be after start; optional overlap allowance).
+- **Category filters** that instantly update all views; categories also define event color accents.
+- **Reports** view: counts and total hours per category for current week, current month, or all events.
+- **Local-first & offline**: no network calls; events persisted to a single `.ics` file.
+- **Straightforward architecture** separated into `types`, `logic`, and `views`.
 
-### Vaativa
-- Kalenterissa on kuukausinäkymä, jossa on rajoitettu määrä tietoa. Käyttäjä voi klikata haluttua päivää ja nähdä sen sisällön. Kuukausia voi selata eteen tai taaksepäin. (Tehty)
-- Voit määritellä, mitkä asiat saavat mennä päällekkäin ja mitkä asiat eivät, jolloin uutta tapahtumaa ei voi varata toisen päälle. (Tehty)
-- Kalenterista voi varata säännöllisiä tapahtumia, joka päivä tai viikko samaan aikaan rajatulle aikajaksolle. Täytyy tunnistaa konfliktit. Voit myös poistaa yksittäisen tällaisen varauksen tai kaikki varaukset kerralla. (Puuttuu, ei tehdä)
-- Kalenterista voida saada yhteenvetoraportteja eri toiminnoista. Paljonko aikaa on varattu eri tyyppisiin asioihin. (Tehty)
+---
+
+## Architecture
+
+<p align="center">
+  <img alt="Architecture overview" src="docs/structure.png" width="90%">
+</p>
+
+- **Entry & navigation:** main app sets up the top bar and routes between views.
+- **Types:** minimal domain models (`Event`, `Category`).
+- **Logic:** in-memory store, validations, and iCalendar read/write.
+- **Views:** Day/Week/Month grids, Add/Remove forms, Filter and Report utilities.
+
+---
+
+## Screenshots
+
+<p align="center">
+  <img alt="Month view" src="docs/month.png" width="90%"><br>
+  <em>Month view (compact calendar grid)</em>
+</p>
+
+<p align="center">
+  <img alt="Week view" src="docs/week.png" width="90%"><br>
+  <em>Week view (30-minute time slots, colored by category)</em>
+</p>
+
+<p align="center">
+  <img alt="Add event form" src="docs/add.png" width="90%"><br>
+  <em>Add event form with validation, optional reminder & overlap flag</em>
+</p>
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Java 11+
+- [sbt](https://www.scala-sbt.org/)
+- macOS, Linux, or Windows
+
+### Run locally
+```bash
+sbt run

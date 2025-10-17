@@ -3,7 +3,6 @@
 [![Scala](https://img.shields.io/badge/Scala-3.x-informational)](#)
 [![Build Tool](https://img.shields.io/badge/build-sbt-informational)](#)
 [![UI](https://img.shields.io/badge/UI-JavaFX%2FScalaFX-informational)](#)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 A clean, local-first **desktop calendar** built with **ScalaFX**. It provides **Day / Week / Month** views, adding and removing events with validation, **category-based filtering**, and a simple **reporting** view that summarizes counts and total hours per category. Data is stored in a portable **iCalendar (.ics)** file for easy interchange.
 
